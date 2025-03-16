@@ -1,6 +1,7 @@
 
-const express = require('express');
-const db = require('../config/db');
+import express from 'express';
+import pool from '../config/db.js';
+
 const router = express.Router();
 
 // Get chat history for a user
@@ -8,7 +9,7 @@ router.get('/history/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
     
-    const [messages] = await db.query(
+    const [messages] = await pool.query(
       'SELECT * FROM chat_messages WHERE user_id = ? ORDER BY created_at DESC LIMIT 50',
       [userId]
     );
@@ -37,7 +38,7 @@ router.post('/send', async (req, res) => {
     const aiResponse = responses[Math.floor(Math.random() * responses.length)];
     
     // Save the message and response to the database
-    const [result] = await db.query(
+    const [result] = await pool.query(
       'INSERT INTO chat_messages (user_id, message, response) VALUES (?, ?, ?)',
       [userId, message, aiResponse]
     );
@@ -45,7 +46,7 @@ router.post('/send', async (req, res) => {
     const newMessageId = result.insertId;
     
     // Get the created message
-    const [messages] = await db.query(
+    const [messages] = await pool.query(
       'SELECT * FROM chat_messages WHERE id = ?',
       [newMessageId]
     );
@@ -57,4 +58,4 @@ router.post('/send', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

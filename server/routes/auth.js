@@ -1,9 +1,11 @@
 
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const db = require('../config/db');
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import pool from '../config/db.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const router = express.Router();
 
 // Register a new user
@@ -12,7 +14,7 @@ router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
     
     // Check if email already exists
-    const [existingUsers] = await db.query(
+    const [existingUsers] = await pool.query(
       'SELECT * FROM users WHERE email = ?',
       [email]
     );
@@ -26,7 +28,7 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     
     // Insert new user
-    const [result] = await db.query(
+    const [result] = await pool.query(
       'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
       [username, email, hashedPassword]
     );
@@ -47,7 +49,7 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     
     // Find user by email
-    const [users] = await db.query(
+    const [users] = await pool.query(
       'SELECT * FROM users WHERE email = ?',
       [email]
     );
@@ -97,7 +99,7 @@ router.get('/me', async (req, res) => {
     
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    const [users] = await db.query(
+    const [users] = await pool.query(
       'SELECT id, username, email, created_at FROM users WHERE id = ?',
       [decoded.id]
     );
@@ -113,4 +115,4 @@ router.get('/me', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
