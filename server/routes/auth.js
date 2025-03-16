@@ -1,9 +1,9 @@
-
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
 import dotenv from 'dotenv';
+import auth from '../middleware/auth.js';
 
 dotenv.config();
 const router = express.Router();
@@ -111,6 +111,50 @@ router.get('/me', async (req, res) => {
     res.json(users[0]);
   } catch (error) {
     console.error('Get user error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Update user profile
+router.put('/profile/:userId', auth, async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { username, email } = req.body;
+    
+    // Ensure the authenticated user can only update their own profile
+    if (req.user.id != userId) {
+      return res.status(403).json({ message: 'Not authorized to update this profile' });
+    }
+    
+    // Check if email is already in use by another user
+    const [existingUsers] = await pool.query(
+      'SELECT * FROM users WHERE email = ? AND id != ?',
+      [email, userId]
+    );
+    
+    if (existingUsers.length > 0) {
+      return res.status(400).json({ message: 'Email already in use by another account' });
+    }
+    
+    // Update user profile
+    await pool.query(
+      'UPDATE users SET username = ?, email = ? WHERE id = ?',
+      [username, email, userId]
+    );
+    
+    // Get updated user data
+    const [users] = await pool.query(
+      'SELECT id, username, email, created_at FROM users WHERE id = ?',
+      [userId]
+    );
+    
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    res.json(users[0]);
+  } catch (error) {
+    console.error('Update profile error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });

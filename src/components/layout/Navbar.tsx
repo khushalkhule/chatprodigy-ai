@@ -1,121 +1,130 @@
 
-import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import CTAButton from '@/components/ui/CTAButton';
-import { cn } from '@/lib/utils';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Menu, X, User } from 'lucide-react';
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const { user, logout } = useAuth();
+  const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   const navLinks = [
-    { name: 'Features', href: '#features' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'Testimonials', href: '#testimonials' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Home', path: '/' },
+    { name: 'Dashboard', path: '/dashboard', protected: true },
+    { name: 'Profile', path: '/profile', protected: true },
   ];
 
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
+  const filteredLinks = navLinks.filter(link => !link.protected || user);
+
   return (
-    <header className={cn(
-      'fixed top-0 w-full z-50 transition-all duration-300',
-      isScrolled ? 'bg-background/80 backdrop-blur-lg border-b' : 'bg-transparent'
-    )}>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold text-primary">AiReplyr</span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <ul className="flex space-x-8">
-              {navLinks.map((link) => (
-                <li key={link.name}>
-                  <a 
-                    href={link.href} 
-                    className="text-foreground/80 hover:text-primary transition-colors duration-300"
-                  >
-                    {link.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-
-            <div className="flex items-center space-x-4">
-              <CTAButton 
-                href="/login" 
-                variant="outline"
-              >
-                Log in
-              </CTAButton>
-              <CTAButton href="/signup">Sign up</CTAButton>
-            </div>
-          </nav>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 text-foreground rounded-md"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Link to="/" className="font-bold text-xl">AiReplyr</Link>
         </div>
-      </div>
 
-      {/* Mobile Navigation */}
-      <div
-        className={cn(
-          "md:hidden absolute top-full left-0 right-0 bg-background border-b",
-          "transition-all duration-300 overflow-hidden",
-          isMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-        )}
-      >
-        <div className="container mx-auto px-4 py-4">
-          <ul className="space-y-4 mb-6">
-            {navLinks.map((link) => (
-              <li key={link.name}>
-                <a
-                  href={link.href}
-                  className="block py-2 text-foreground/80 hover:text-primary transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.name}
-                </a>
-              </li>
+        <div className="hidden md:flex items-center gap-4">
+          <nav className="flex items-center gap-4 text-sm">
+            {filteredLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`transition-colors hover:text-foreground/80 ${
+                  location.pathname === link.path ? 'text-foreground font-medium' : 'text-foreground/60'
+                }`}
+              >
+                {link.name}
+              </Link>
             ))}
-          </ul>
-
-          <div className="flex flex-col space-y-3">
-            <CTAButton 
-              href="/login" 
-              variant="outline" 
-              className="w-full justify-center"
-            >
-              Log in
-            </CTAButton>
-            <CTAButton 
-              href="/signup" 
-              className="w-full justify-center"
-            >
-              Sign up
-            </CTAButton>
+          </nav>
+          <div className="flex items-center gap-2">
+            {user ? (
+              <>
+                <Link to="/profile" className="flex items-center gap-2 text-sm text-foreground/60 hover:text-foreground">
+                  <User size={18} />
+                  {user.username}
+                </Link>
+                <Button variant="ghost" onClick={logout}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/login">Login</Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/signup">Sign up</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
+
+        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <SheetTrigger asChild className="md:hidden">
+            <Button variant="ghost" size="icon">
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right">
+            <SheetHeader>
+              <SheetTitle>AiReplyr</SheetTitle>
+            </SheetHeader>
+            <nav className="flex flex-col gap-4 mt-6">
+              {filteredLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`text-lg ${
+                    location.pathname === link.path ? 'text-foreground font-medium' : 'text-foreground/60'
+                  }`}
+                  onClick={closeMobileMenu}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              {user ? (
+                <>
+                  <Link 
+                    to="/profile"
+                    className="flex items-center gap-2 text-foreground/60 hover:text-foreground"
+                    onClick={closeMobileMenu}
+                  >
+                    <User size={18} />
+                    My Profile
+                  </Link>
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => {
+                      logout();
+                      closeMobileMenu();
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="ghost" asChild onClick={closeMobileMenu}>
+                    <Link to="/login">Login</Link>
+                  </Button>
+                  <Button asChild onClick={closeMobileMenu}>
+                    <Link to="/signup">Sign up</Link>
+                  </Button>
+                </>
+              )}
+            </nav>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );
