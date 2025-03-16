@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import ChatInterface from '@/components/chat/ChatInterface';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { BarChart4, Settings, ArrowUpRight, Bell, User } from 'lucide-react';
+import { BarChart4, Settings, ArrowUpRight, Bell, User, Bot } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 const Dashboard: React.FC = () => {
@@ -108,6 +108,12 @@ const Dashboard: React.FC = () => {
                   <BarChart4 size={16} className="mr-2" />
                   View Analytics
                 </Button>
+                <Link to="/chatbots">
+                  <Button variant="default" className="w-full">
+                    <Bot size={16} className="mr-2" />
+                    Manage Chatbots
+                  </Button>
+                </Link>
                 <Link to="/profile">
                   <Button variant="outline" className="w-full">
                     <User size={16} className="mr-2" />
