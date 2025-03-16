@@ -1,6 +1,7 @@
 
 import express from 'express';
 import pool from '../config/db.js';
+import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -17,6 +18,28 @@ router.get('/history/:userId', async (req, res) => {
     res.json(messages);
   } catch (error) {
     console.error('Chat history error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Clear chat history for a user
+router.delete('/clear/:userId', auth, async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    
+    // Ensure the authenticated user can only clear their own history
+    if (req.user.id != userId) {
+      return res.status(403).json({ message: 'Not authorized to clear this chat history' });
+    }
+    
+    await pool.query(
+      'DELETE FROM chat_messages WHERE user_id = ?',
+      [userId]
+    );
+    
+    res.json({ message: 'Chat history cleared successfully' });
+  } catch (error) {
+    console.error('Clear chat history error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });

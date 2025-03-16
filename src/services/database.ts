@@ -18,7 +18,7 @@ export interface ChatMessage {
   created_at: string;
 }
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://localhost:3306/api';
 
 // Auth functions
 export const loginUser = async (email: string, password: string): Promise<User | null> => {
@@ -153,5 +153,36 @@ export const sendChatMessage = async (userId: number, message: string): Promise<
     console.error("Error sending message:", error);
     toast.error("Failed to send message");
     return null;
+  }
+};
+
+export const clearChatHistory = async (userId: number): Promise<boolean> => {
+  try {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      toast.error("Authentication required");
+      return false;
+    }
+    
+    const response = await fetch(`${API_URL}/chat/clear/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        'x-auth-token': token
+      }
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      toast.error(error.message || "Failed to clear chat history");
+      return false;
+    }
+
+    toast.success("Chat history cleared successfully");
+    return true;
+  } catch (error) {
+    console.error("Error clearing chat history:", error);
+    toast.error("Failed to clear chat history");
+    return false;
   }
 };
