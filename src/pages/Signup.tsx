@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -8,10 +8,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import CTAButton from '@/components/ui/CTAButton';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import { useAuth } from '@/contexts/AuthContext';
 
 const signupSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
@@ -28,8 +29,15 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 const Signup = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { toast } = useToast();
   const navigate = useNavigate();
+  const { register, user } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -45,28 +53,18 @@ const Signup = () => {
   const onSubmit = async (data: SignupFormValues) => {
     setIsSubmitting(true);
     
-    // Simulate API call
     try {
-      console.log('Signup form submitted:', data);
+      const success = await register(data.name, data.email, data.password);
       
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast({
-        title: "Account created!",
-        description: "Welcome to AiReplyr. Let's set up your first chatbot.",
-      });
-      
-      // In a real app, we would store the user's session/token here
-      // and then redirect to the dashboard or onboarding
-      navigate('/dashboard');
+      if (success) {
+        toast.success("Account created successfully! Please log in.");
+        navigate('/login');
+      } else {
+        toast.error("Failed to create account. Please try again.");
+      }
     } catch (error) {
       console.error('Error creating account:', error);
-      toast({
-        title: "Sign up failed",
-        description: "There was an error creating your account. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
