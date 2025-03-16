@@ -19,6 +19,7 @@ interface PricingCardProps {
   ctaText: string;
   ctaAction?: () => void;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 const PricingCard = ({
@@ -30,17 +31,21 @@ const PricingCard = ({
   highlighted = false,
   ctaText,
   ctaAction,
-  className
+  className,
+  style
 }: PricingCardProps) => {
   return (
-    <div className={cn(
-      'relative rounded-2xl p-8 transition-all duration-500',
-      'border flex flex-col h-full',
-      highlighted ? 
-        'bg-primary/5 border-primary/20 shadow-lg' : 
-        'bg-card border-border',
-      className
-    )}>
+    <div 
+      className={cn(
+        'relative rounded-2xl p-8 transition-all duration-500',
+        'border flex flex-col h-full',
+        highlighted ? 
+          'bg-primary/5 border-primary/20 shadow-lg' : 
+          'bg-card border-border',
+        className
+      )}
+      style={style}
+    >
       {highlighted && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-white text-xs font-medium px-3 py-1 rounded-full">
           Most Popular

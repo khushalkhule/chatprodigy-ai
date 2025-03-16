@@ -8,16 +8,20 @@ interface FeatureCardProps {
   description: string;
   icon: LucideIcon;
   className?: string;
+  style?: React.CSSProperties;
 }
 
-const FeatureCard = ({ title, description, icon: Icon, className }: FeatureCardProps) => {
+const FeatureCard = ({ title, description, icon: Icon, className, style }: FeatureCardProps) => {
   return (
-    <div className={cn(
-      'group relative rounded-2xl p-6 bg-white border border-border',
-      'shadow-sm transition-all duration-300 hover:shadow-md',
-      'flex flex-col items-start gap-4',
-      className
-    )}>
+    <div 
+      className={cn(
+        'group relative rounded-2xl p-6 bg-white border border-border',
+        'shadow-sm transition-all duration-300 hover:shadow-md',
+        'flex flex-col items-start gap-4',
+        className
+      )}
+      style={style}
+    >
       <div className="p-3 rounded-lg bg-primary/10 text-primary">
         <Icon size={24} />
       </div>

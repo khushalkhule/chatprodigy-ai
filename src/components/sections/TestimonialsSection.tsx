@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 
@@ -9,15 +8,19 @@ interface TestimonialProps {
   company: string;
   imageUrl?: string;
   className?: string;
+  style?: React.CSSProperties;
 }
 
-const Testimonial = ({ quote, author, role, company, imageUrl, className }: TestimonialProps) => {
+const Testimonial = ({ quote, author, role, company, imageUrl, className, style }: TestimonialProps) => {
   return (
-    <div className={cn(
-      'bg-white rounded-2xl p-8 shadow-sm border border-border',
-      'transition-all duration-300 hover:shadow-md',
-      className
-    )}>
+    <div 
+      className={cn(
+        'bg-white rounded-2xl p-8 shadow-sm border border-border',
+        'transition-all duration-300 hover:shadow-md',
+        className
+      )}
+      style={style}
+    >
       <div className="flex flex-col h-full">
         <div className="mb-6">
           <svg width="45" height="36" viewBox="0 0 45 36" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary/20">
