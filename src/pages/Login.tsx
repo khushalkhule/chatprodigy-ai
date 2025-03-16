@@ -1,0 +1,167 @@
+
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import CTAButton from '@/components/ui/CTAButton';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
+
+const loginSchema = z.object({
+  email: z.string().email({ message: 'Please enter a valid email address' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+
+const Login = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const onSubmit = async (data: LoginFormValues) => {
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    try {
+      console.log('Login form submitted:', data);
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      toast({
+        title: "Login successful!",
+        description: "Welcome back to AiReplyr.",
+      });
+      
+      // In a real app, we would store the user's session/token here
+      // and then redirect to the dashboard
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Error logging in:', error);
+      toast({
+        title: "Login failed",
+        description: "Invalid email or password. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      
+      <main className="flex-grow flex items-center justify-center py-16 px-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-border">
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold">Welcome back</h1>
+              <p className="text-muted-foreground mt-2">Enter your credentials to access your account</p>
+            </div>
+            
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email address</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="email"
+                          placeholder="you@example.com" 
+                          autoComplete="email"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input 
+                            type={showPassword ? "text" : "password"} 
+                            placeholder="********" 
+                            autoComplete="current-password"
+                            {...field} 
+                          />
+                          <button 
+                            type="button"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <div className="flex justify-between items-center text-sm">
+                  <label className="flex items-center">
+                    <input type="checkbox" className="rounded border-gray-300 text-primary mr-1" />
+                    <span>Remember me</span>
+                  </label>
+                  <Link to="/forgot-password" className="text-primary hover:underline">
+                    Forgot password?
+                  </Link>
+                </div>
+                
+                <CTAButton type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    "Sign in"
+                  )}
+                </CTAButton>
+              </form>
+            </Form>
+            
+            <div className="mt-6 text-center">
+              <p className="text-sm">
+                Don't have an account?{' '}
+                <Link to="/signup" className="text-primary font-medium hover:underline">
+                  Create one now
+                </Link>
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default Login;
