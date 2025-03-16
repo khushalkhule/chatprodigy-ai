@@ -8,6 +8,7 @@ import PricingSection from '@/components/sections/PricingSection';
 import TestimonialsSection from '@/components/sections/TestimonialsSection';
 import ChatbotDemo from '@/components/chat/ChatbotDemo';
 import CTAButton from '@/components/ui/CTAButton';
+import ContactForm from '@/components/forms/ContactForm';
 import { ArrowRight } from 'lucide-react';
 
 const Index = () => {
@@ -89,24 +90,52 @@ const Index = () => {
         <PricingSection />
         <TestimonialsSection />
         
-        {/* CTA Section */}
+        {/* CTA Section with Contact Form */}
         <section id="contact" className="py-24 bg-primary/5">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Ready to Transform Your Customer Experience?
-              </h2>
-              <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Join thousands of businesses using AiReplyr to automate support, increase conversions, and delight customers 24/7.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <CTAButton href="/signup" size="lg">
-                  Get Started Free
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </CTAButton>
-                <CTAButton href="/contact" variant="outline" size="lg">
-                  Contact Sales
-                </CTAButton>
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="flex flex-col justify-center">
+                  <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                    Ready to Transform Your Customer Experience?
+                  </h2>
+                  <p className="text-xl text-muted-foreground mb-8">
+                    Join thousands of businesses using AiReplyr to automate support, increase conversions, and delight customers 24/7.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                    <CTAButton href="/signup" size="lg">
+                      Get Started Free
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </CTAButton>
+                    <CTAButton href="/contact" variant="outline" size="lg">
+                      Book a Demo
+                    </CTAButton>
+                  </div>
+                  <div className="mt-8 text-muted-foreground">
+                    <p className="flex items-center text-sm mb-2">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2 text-primary">
+                        <path d="M5 13L9 17L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      No credit card required
+                    </p>
+                    <p className="flex items-center text-sm mb-2">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2 text-primary">
+                        <path d="M5 13L9 17L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      14-day free trial
+                    </p>
+                    <p className="flex items-center text-sm">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2 text-primary">
+                        <path d="M5 13L9 17L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Cancel anytime
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-border">
+                  <h3 className="text-2xl font-bold mb-6">Contact Us</h3>
+                  <ContactForm />
+                </div>
               </div>
             </div>
           </div>

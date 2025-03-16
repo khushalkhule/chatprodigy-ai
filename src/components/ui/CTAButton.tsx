@@ -10,6 +10,8 @@ interface CTAButtonProps {
   variant?: 'default' | 'secondary' | 'outline' | 'ghost';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   onClick?: () => void;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
 }
 
 const CTAButton = ({ 
@@ -18,7 +20,9 @@ const CTAButton = ({
   href, 
   variant = 'default',
   size = 'default',
-  onClick
+  onClick,
+  type = 'button',
+  disabled = false
 }: CTAButtonProps) => {
   const buttonClasses = cn(
     'font-medium tracking-wide transition-all duration-300',
@@ -34,6 +38,7 @@ const CTAButton = ({
           size={size} 
           className={buttonClasses}
           onClick={onClick}
+          disabled={disabled}
         >
           {children}
         </Button>
@@ -47,6 +52,8 @@ const CTAButton = ({
       size={size} 
       className={buttonClasses} 
       onClick={onClick}
+      type={type}
+      disabled={disabled}
     >
       {children}
     </Button>
