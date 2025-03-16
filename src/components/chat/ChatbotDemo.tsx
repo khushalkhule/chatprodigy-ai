@@ -18,7 +18,7 @@ const ChatbotDemo = () => {
     {
       id: '1',
       type: 'bot',
-      text: 'Hi there! 👋 I'm AiReplyr, your AI assistant. How can I help you today?',
+      text: "Hi there! 👋 I'm AiReplyr, your AI assistant. How can I help you today?",
       timestamp: new Date()
     }
   ]);
@@ -59,10 +59,10 @@ const ChatbotDemo = () => {
     setIsTyping(true);
     
     const responses: Record<string, string> = {
-      'what is aireplyr?': 'AiReplyr is an enterprise-grade SaaS AI chatbot platform designed for seamless website integration. It uses OpenAI\'s language models to provide conversational AI, offers customizable design, knowledge base management, and supports lead generation.',
-      'how does it work?': 'AiReplyr works by integrating with your website through a simple embed code. It uses your custom knowledge base (website content, documents, FAQs) and OpenAI\'s language models to provide contextually relevant responses to your visitors 24/7.',
-      'pricing options?': 'We offer three main plans: Starter at $29/month, Pro at $79/month, and Business at $199/month. Each plan includes different features and usage limits. You can check our pricing section for more details.',
-      'how to get started?': 'Getting started is easy! Simply sign up for an account, create your first chatbot using our wizard, configure your knowledge base, customize the design, and add the embed code to your website. The whole process takes less than 30 minutes.'
+      'what is aireplyr?': "AiReplyr is an enterprise-grade SaaS AI chatbot platform designed for seamless website integration. It uses OpenAI's language models to provide conversational AI, offers customizable design, knowledge base management, and supports lead generation.",
+      'how does it work?': "AiReplyr works by integrating with your website through a simple embed code. It uses your custom knowledge base (website content, documents, FAQs) and OpenAI's language models to provide contextually relevant responses to your visitors 24/7.",
+      'pricing options?': "We offer three main plans: Starter at $29/month, Pro at $79/month, and Business at $199/month. Each plan includes different features and usage limits. You can check our pricing section for more details.",
+      'how to get started?': "Getting started is easy! Simply sign up for an account, create your first chatbot using our wizard, configure your knowledge base, customize the design, and add the embed code to your website. The whole process takes less than 30 minutes."
     };
 
     setTimeout(() => {
